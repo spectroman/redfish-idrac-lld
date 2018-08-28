@@ -1,0 +1,31 @@
+#!/usr/bin/bash
+############################
+#
+# Redshift Reader for Zabbix
+#
+# This script will be able to read information collected on batch files
+#
+# by spectroman@yahoo.com ## 07-08-2018
+#
+#
+
+LOCAL=$(dirname $0)
+
+BATCH=$LOCAL/redfish/$1
+ITEM=$2
+DISK=$3
+
+if [[ -z ${BATCH} || -z ${ITEM} ]]; then
+  echo "You must me gimme something dude! wth!"
+  echo "Try: $0 somehostname.nameofobject.json Status.Health \"Disk Name Reference\""
+  exit 1
+fi
+
+if [ ! -f ${BATCH} ]; then
+  echo "no batch file yet"
+  exit 1
+else
+  IFS=$''
+  cat ${BATCH} | jq '.Devices[] | select(.Name=="'${DISK}'") ' | jq ".${ITEM}" | tr -d "'" | tr -d '"' | tr ' ' '\n'
+  exit 0
+fi

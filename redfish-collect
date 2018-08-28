@@ -1,0 +1,56 @@
+#!/usr/bin/ruby
+############################
+#
+# Redshift Collector for Zabbix
+#
+# This script will be able to collect information previously discovered via LLD
+#
+# by spectroman@yahoo.com ## 07-08-2018
+#
+#
+
+require 'net/https'
+require 'uri'
+require 'json'
+
+USER    =ARGV[0]
+PASS    =ARGV[1]
+HOST    =ARGV[2]
+ITEMSURL=ARGV[3]
+
+LOCALPATH="/etc/zabbix/externalscripts/redfish/"
+
+if !USER || !PASS || !HOST || !ITEMSURL
+  puts "You must gimme something man!"
+  puts "Try: $./redfish-lld user pass host item/something/orelse"
+  exit 1
+end
+
+ITEMDEST = ITEMSURL.gsub("||","%7C%7C")
+FILETMP = ITEMSURL.gsub("||","__")
+ITEMFILE = FILETMP.gsub("%23","-")
+
+base = URI.parse(["https://",HOST,ITEMDEST].join(''))
+request = Net::HTTP::Get.new(base)
+request.basic_auth(USER, PASS)
+
+response = Net::HTTP.start(base.hostname, base.port, :timeout => 60, :use_ssl => base.scheme == "https", :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+  https.request(request)
+end
+
+list = JSON.parse(response.body)
+
+filename=ITEMFILE.split("/")[-1]
+filename=[LOCALPATH,HOST,"-",filename,".json"].join('')
+
+#puts JSON.pretty_generate(list)
+
+if File.file?("#{filename}")
+  file = File.delete("#{filename}")
+end
+
+open("#{filename}","w") do |f|
+  f.write(JSON.pretty_generate(list))
+end
+
+puts filename

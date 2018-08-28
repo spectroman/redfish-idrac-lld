@@ -1,0 +1,60 @@
+#!/usr/bin/ruby
+############################
+#
+# Redshift Collector for Zabbix
+#
+# This script will be able to collect information previously discovered via LLD
+#
+# by spectroman@yahoo.com ## 07-08-2018
+#
+#
+
+require 'net/https'
+require 'uri'
+require 'json'
+
+USER    =ARGV[0]
+PASS    =ARGV[1]
+HOST    =ARGV[2]
+ITEM    =ARGV[3]
+
+LOGURI="/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
+
+if !USER || !PASS || !HOST || !ITEM
+  puts "You must gimme something man!"
+  puts "Try: $./redfish-lld user pass host item.to.read"
+  exit 1
+end
+
+base = URI.parse(["https://",HOST,LOGURI].join(''))
+request = Net::HTTP::Get.new(base)
+request.basic_auth(USER, PASS)
+
+response = Net::HTTP.start(base.hostname, base.port, :timeout => 60, :use_ssl => base.scheme == "https", :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+  https.request(request)
+end
+
+list = JSON.parse(response.body)
+
+last_entry = ([" Log Entry",list['Members@odata.count']].join(' '))
+
+list['Members'].each do |message|
+  if message['Name'] == last_entry
+    case ITEM 
+    when "last_log" 
+      puts message['Message']
+    when "date"
+      puts message['Created']
+    when "description"
+      puts message['Description']
+    when "severity"
+      puts message['Severity']
+    when "sensor"
+      puts message['SensorType'][0]['Member']
+    when "id"
+      puts message['Id']
+    else
+      puts list['Members@odata.count']
+    end
+  end
+end

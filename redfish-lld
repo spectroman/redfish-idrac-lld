@@ -1,0 +1,134 @@
+#!/usr/bin/ruby
+############################
+#
+# Redshift LLD for Zabbix
+#
+# This script will be able to discovery and put out most of the important items
+#  exposed by redshift feature on iDRAC v7 or grater.
+#
+# by spectroman@yahoo.com ## 07-08-2018
+#
+#
+
+require 'net/https'
+require 'uri'
+require 'json'
+
+USER    =ARGV[0]
+PASS    =ARGV[1]
+HOST    =ARGV[2]
+DISCITEM=ARGV[3]
+
+LOCALPATH="/etc/zabbix/externalscripts/redfish/"
+
+if !USER || !PASS || !HOST || !DISCITEM
+  puts "You must gimme something man!"
+  puts "Try: $./redfish-lld user pass host item"
+  puts "valid items are: CooledBy, ManagedBy, PoweredBy, Processors, SimpleStorage, Thermal"
+  exit 1
+end
+
+if DISCITEM == "CooledBy" or DISCITEM == "ManagedBy" or DISCITEM == "PoweredBy"
+  APIURL="/redfish/v1/Systems/System.Embedded.1"
+  TYPE="A"
+elsif DISCITEM == "Processors" or DISCITEM == "SimpleStorage" or DISCITEM == "Thermal"
+  case DISCITEM
+  when "Processors"
+    APIURL="/redfish/v1/Systems/System.Embedded.1/Processors"
+    TYPE="B"
+  when "SimpleStorage"
+    APIURL="/redfish/v1/Systems/System.Embedded.1/Storage/Controllers"
+    TYPE="C"
+  else
+    APIURL="/redfish/v1/Chassis/System.Embedded.1/Thermal"
+    TYPE="D"
+  end
+else
+  puts "Could not find a recognized Item option, go read a manual!"
+  puts "valid items are: CooledBy, ManagedBy, PoweredBy, Processors, SimpleStorage, Thermal"
+  exit 1
+end
+
+base = URI.parse(["https://",HOST,APIURL].join(''))
+request = Net::HTTP::Get.new(base)
+request.basic_auth(USER, PASS)
+
+response = Net::HTTP.start(base.hostname, base.port, :timeout => 60, :use_ssl => base.scheme == "https", :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+  https.request(request)
+end
+
+list = JSON.parse(response.body)
+
+discovery_list = { }
+
+MACRONAME = DISCITEM.upcase
+
+def file_name(url)
+  filetmp = url.gsub("||","__")
+  filefin = filetmp.gsub("%23","-")
+  filename=filefin.split("/")[-1]
+  filename=[HOST,"-",filename,".json"].join('')
+  return filename
+end
+
+if TYPE == "A"
+  list['Links'][DISCITEM].each do |system|
+    filemacro = file_name(system['@odata.id'])
+    if discovery_list["data"]
+      discovery_list["data"].push({ "{##{MACRONAME}}" => system['@odata.id'] , "{#FILENAME}" => filemacro })
+    else
+      discovery_list = { "data" => [ "{##{MACRONAME}}" => system['@odata.id']  , "{#FILENAME}" => filemacro ] }
+    end
+  end
+elsif TYPE == "B"
+  list['Members'].each do |system|
+    filemacro = file_name(system['@odata.id'])
+    if discovery_list["data"]
+      discovery_list["data"].push({ "{##{MACRONAME}}" => system['@odata.id'] , "{#FILENAME}" => filemacro })
+    else
+      discovery_list = { "data" => [ "{##{MACRONAME}}" => system['@odata.id'] , "{#FILENAME}" => filemacro ] }
+    end
+  end
+elsif TYPE == "C"
+  list['Members'].each do |storage|
+    filemacro = file_name(storage['@odata.id'])
+
+    filefinal=[LOCALPATH,filemacro].join('')
+
+    disks = URI.parse(["https://",HOST,storage['@odata.id']].join(''))
+    request = Net::HTTP::Get.new(disks)
+    request.basic_auth(USER, PASS)
+
+    response = Net::HTTP.start(disks.hostname, disks.port, :timeout => 60, :use_ssl => disks.scheme == "https", :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+      https.request(request)
+    end
+    disklist = JSON.parse(response.body)
+
+    if File.file?("#{filefinal}")
+      file = File.delete("#{filefinal}")
+    end
+
+    open("#{filefinal}","w") do |f|
+      f.write(JSON.pretty_generate(disklist))
+    end
+
+    disklist['Devices'].each do |disk|
+      if discovery_list["data"]
+        discovery_list["data"].push({ "{##{MACRONAME}}" => disk['Name'] , "{#FILENAME}" => filemacro })
+      else
+        discovery_list = { "data" => [ "{##{MACRONAME}}" => disk['Name'] , "{#FILENAME}" => filemacro ] }
+      end
+    end
+  end
+elsif TYPE == "D"
+  list['Temperatures'].each do |thermal|
+    filemacro = file_name(thermal['@odata.id'])
+    if discovery_list["data"]
+      discovery_list["data"].push({ "{##{MACRONAME}}" => thermal['@odata.id'] , "{#FILENAME}" => filemacro })
+    else
+      discovery_list = { "data" => [ "{##{MACRONAME}}" => thermal['@odata.id'] , "{#FILENAME}" => filemacro ] }
+    end
+  end
+end
+
+puts JSON.pretty_generate(discovery_list)
