@@ -1,11 +1,12 @@
 #!/usr/bin/bash
+
 ############################
 #
 # Redshift Reader for Zabbix
 #
 # This script will be able to read information collected on batch files
 #
-# by spectroman@yahoo.com ## 07-08-2018
+# by julio.hegedus@sentia.com ## 07-08-2018
 #
 #
 

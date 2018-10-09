@@ -4297,7 +4297,7 @@
             <macros>
                 <macro>
                     <macro>{$PASSWORD}</macro>
-                    <value>omgitwassecret</value>
+                    <value>fcrf14vsm</value>
                 </macro>
                 <macro>
                     <macro>{$USER}</macro>
@@ -4310,7 +4310,7 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>({Template Hw iDRAC Redfish LLD:redfish-reader[{$IPMI}-System.Embedded.1.json,PowerState].iregexp(On)}=0) and ({Template Hw iDRAC Redfish LLD:redfish-reader[{$IPMI}-System.Embedded.1.json,MemorySummary.Status.Health].iregexp(null)}=0 and {Template Hw iDRAC Redfish LLD:redfish-reader[{$IPMI}-System.Embedded.1.json,MemorySummary.Status.Health].iregexp(no batch file yet)}=0)</expression>
+            <expression>({Template Hw iDRAC Redfish LLD:redfish-reader[{$IPMI}-System.Embedded.1.json,PowerState].iregexp(On)}=0) and ({Template Hw iDRAC Redfish LLD:redfish-reader[{$IPMI}-System.Embedded.1.json,PowerState].iregexp(null)}=0 and {Template Hw iDRAC Redfish LLD:redfish-reader[{$IPMI}-System.Embedded.1.json,PowerState].iregexp(no batch file yet)}=0 and {Template Hw iDRAC Redfish LLD:redfish-reader[{$IPMI}-System.Embedded.1.json,PowerState].str(0)}=0)</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>{HOSNTAME} Indicating is powered off</name>

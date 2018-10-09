@@ -1,11 +1,12 @@
 #!/usr/bin/ruby
+
 ############################
 #
 # Redshift Collector for Zabbix
 #
 # This script will be able to collect information previously discovered via LLD
 #
-# by spectroman@yahoo.com ## 07-08-2018
+# by julio.hegedus@sentia.com ## 07-08-2018
 #
 #
 

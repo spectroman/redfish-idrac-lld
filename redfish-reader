@@ -1,11 +1,12 @@
 #!/bin/bash
+
 ############################
 #
 # Redshift Reader for Zabbix
 #
 # This script will be able to read informateion collected on batch files
 #
-# by spectroman@yahoo.com ## 07-08-2018
+# by julio.hegedus@sentia.com ## 07-08-2018
 #
 #
 
@@ -24,6 +25,11 @@ if [ ! -f ${BATCH} ]; then
   echo "no batch file yet"
   exit 1
 else
-  cat ${BATCH} | jq ".${ITEM}" | tr -d "'" | tr -d '"'
+  RES=`cat ${BATCH} | jq ".${ITEM}" | tr -d "'" | tr -d '"'`
+  if [[ -z $RES ]]; then
+    echo "0"
+  else
+    echo $RES
+  fi
   exit 0
 fi
