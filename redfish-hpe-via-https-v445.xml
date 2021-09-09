@@ -1,0 +1,2707 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2021-09-09T07:57:01Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Hw RedFish HPe HTTPS LLD</template>
+            <name>Template Hw RedFish HPe HTTPS LLD</name>
+            <description>Redfish template for HPe servers</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>RedFish Basic System Information</name>
+                </application>
+                <application>
+                    <name>RedFish Disks Information</name>
+                </application>
+                <application>
+                    <name>RedFish Ethernet Ifs Information</name>
+                </application>
+                <application>
+                    <name>RedFish Fans Information</name>
+                </application>
+                <application>
+                    <name>RedFish Power Source Information</name>
+                </application>
+                <application>
+                    <name>RedFish Processors Information</name>
+                </application>
+                <application>
+                    <name>RedFish Storage Controller Information</name>
+                </application>
+                <application>
+                    <name>RedFish Temperature Information</name>
+                </application>
+                <application>
+                    <name>RedFish Volumes Information</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Master Item for System Information</name>
+                    <type>HTTP_AGENT</type>
+                    <key>master_system</key>
+                    <delay>30m</delay>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Systems/{$MEMBERID}</url>
+                </item>
+                <item>
+                    <name>Server BIOS Version</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_biosv</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.BiosVersion</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Hostname via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_hostname</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.HostName</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Manufacturer via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_manuf</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Manufacturer</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Server Model via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_model</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Model</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Memory Summary Health via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_msh</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.MemorySummary.Status.Health</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{iregexp(OK)}=0</expression>
+                            <name>{HOSTNAME} ILO Memory Summary Health is {ITEM.LASTVALUE}</name>
+                            <opdata>{ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>opsgenie_team</tag>
+                                    <value>DCS</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Memory Summary Total Size via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_mss</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.MemorySummary.TotalSystemMemoryGiB</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Memory Summary Status via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_msse</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.MemorySummary.Status.State</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Processor Count via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_pcc</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.ProcessorSummary.Count</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Processor Health Status via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_pchs</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.ProcessorSummary.Status.Health</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{iregexp(OK)}=0</expression>
+                            <name>{HOSTNAME} ILO Processor Summary Health is {ITEM.LASTVALUE}</name>
+                            <opdata>{ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Processor Model via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_pcm</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.ProcessorSummary.Model</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Processor Status via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_pcse</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.ProcessorSummary.Status.State</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Server PartNumber via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_PN</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.PartNumber</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Power State via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_pw</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.PowerState</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{diff()}=1</expression>
+                            <name>{HOSTNAME} Health state has changed to {ITEM.LASTVALUE}</name>
+                            <opdata>{ITEM.LASTVALUE}</opdata>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                        <trigger>
+                            <expression>{iregexp(On)}=0</expression>
+                            <name>{HOSTNAME} Power state has changed to {ITEM.LASTVALUE}</name>
+                            <opdata>{ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Server Health Status via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_shs</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Status.Health</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{iregexp(OK)}=0</expression>
+                            <name>{HOSTNAME} Server Summary Health is {ITEM.LASTVALUE}</name>
+                            <opdata>{ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                            <tags>
+                                <tag>
+                                    <tag>opsgenie_team</tag>
+                                    <value>DCS</value>
+                                </tag>
+                            </tags>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Server SKU via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_SKU</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.SKU</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Server Serial Number via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_SN</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.SerialNumber</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Server Statue State via RedFish</name>
+                    <type>DEPENDENT</type>
+                    <key>RF_sss</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>RedFish Basic System Information</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Status.State</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>master_system</key>
+                    </master_item>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Collect Storage Controllers</name>
+                    <type>HTTP_AGENT</type>
+                    <key>Controllers</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Storage Health Status {{#SCNURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>storage_health[{#SCNURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Storage Controller Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.Health</params>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>OK</error_handler_params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>if (value === null || value === '') {
+  return &quot;OK&quot;
+}</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>storage_master[{#SCNURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{iregexp(OK)}=0</expression>
+                                    <name>{HOSTNAME} {{#SCNURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} is not Healthy ({ITEM.LASTVALUE})</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>HIGH</priority>
+                                    <description>This Storage from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Master {{#SCNURI}.regsub(&quot;.*\|(.*)$&quot;,\1)}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>storage_master[{#SCNURI}]</key>
+                            <delay>15m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Storage Controller Information</name>
+                                </application>
+                            </applications>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}{#SCNURI}</url>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Storage Name {{#SCNURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>storage_name[{#SCNURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Storage Controller Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Name</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>storage_master[{#SCNURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Storage Status State {{#SCNURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>storage_state[{#SCNURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Storage Controller Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.State</params>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>Enabled</error_handler_params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>storage_master[{#SCNURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} {{#SCNURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} state has changed to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This Storage from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Systems/{$MEMBERID}/Storage</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#SCNURI}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Members</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect FANs</name>
+                    <type>HTTP_AGENT</type>
+                    <key>cooledBy</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Master {#FANID}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>fan_details[{#FANID}]</key>
+                            <delay>10m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Fans[?(@.FanName == &quot;{#FANID}&quot;)]</params>
+                                </step>
+                            </preprocessing>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}/redfish/v1/Chassis/{$MEMBERID}/Thermal#/Fans/</url>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Status Health {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_hs[{#FANID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].Status.Health</params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>if (value === null || value === '') {
+  return &quot;OK&quot;
+} else {
+  return value
+}</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{iregexp(OK)}=0</expression>
+                                    <name>{HOSTNAME} {#FANID} is not in Healthy state ({ITEM.LASTVALUE})</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>HIGH</priority>
+                                    <description>This fan from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Lower Threshold Critical {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_ltc[{#FANID}]</key>
+                            <delay>0</delay>
+                            <units>RPM</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].LowerThresholdCritical</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Lower Threshold Fatal {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_ltf[{#FANID}]</key>
+                            <delay>0</delay>
+                            <units>RPM</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].LowerThresholdFatal</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Lower Threshold Non Critical {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_ltnf_[{#FANID}]</key>
+                            <delay>0</delay>
+                            <units>RPM</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].LowerThresholdNonCritical</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Max Reading Range {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_max_rr[{#FANID}]</key>
+                            <delay>0</delay>
+                            <units>RPM</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].MaxReadingRange</params>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>if (value === null || value === '') {
+  return &quot;0&quot;
+}</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Min Reading Range {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_min_rr[{#FANID}]</key>
+                            <delay>0</delay>
+                            <units>RPM</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].MinReadingRange</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Name {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_name[{#FANID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].Name</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Reading {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_r[{#FANID}]</key>
+                            <delay>0</delay>
+                            <units>RPM</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].Reading</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Fan Status {#FANID}</name>
+                            <type>DEPENDENT</type>
+                            <key>FAN_s[{#FANID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Fans Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].Status.State</params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>if (value === null || value === '') {
+  return &quot;Disabled&quot;
+} else {
+  return value
+}</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>fan_details[{#FANID}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template Hw RedFish HPe HTTPS LLD:FAN_r[{#FANID}].last()}&lt;{Template Hw RedFish HPe HTTPS LLD:FAN_ltnf_[{#FANID}].last()} or&#13;
+{Template Hw RedFish HPe HTTPS LLD:FAN_r[{#FANID}].last()}&lt;{Template Hw RedFish HPe HTTPS LLD:FAN_ltf[{#FANID}].last()} or&#13;
+{Template Hw RedFish HPe HTTPS LLD:FAN_r[{#FANID}].last()}&lt;{Template Hw RedFish HPe HTTPS LLD:FAN_ltc[{#FANID}].last()}</expression>
+                            <name>{HOSTNAME} {#FANID} is underperforming at {ITEM.LASTVALUE}</name>
+                            <opdata>{ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <description>This fan from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <graph_prototypes>
+                        <graph_prototype>
+                            <name>Fan Speeds {#FANID}</name>
+                            <graph_items>
+                                <graph_item>
+                                    <color>199C0D</color>
+                                    <item>
+                                        <host>Template Hw RedFish HPe HTTPS LLD</host>
+                                        <key>FAN_r[{#FANID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>1</sortorder>
+                                    <color>F63100</color>
+                                    <item>
+                                        <host>Template Hw RedFish HPe HTTPS LLD</host>
+                                        <key>FAN_ltf[{#FANID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>2</sortorder>
+                                    <color>2774A4</color>
+                                    <item>
+                                        <host>Template Hw RedFish HPe HTTPS LLD</host>
+                                        <key>FAN_ltnf_[{#FANID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>3</sortorder>
+                                    <color>F7941D</color>
+                                    <item>
+                                        <host>Template Hw RedFish HPe HTTPS LLD</host>
+                                        <key>FAN_ltc[{#FANID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>4</sortorder>
+                                    <color>FC6EA3</color>
+                                    <item>
+                                        <host>Template Hw RedFish HPe HTTPS LLD</host>
+                                        <key>FAN_max_rr[{#FANID}]</key>
+                                    </item>
+                                </graph_item>
+                                <graph_item>
+                                    <sortorder>5</sortorder>
+                                    <color>6C59DC</color>
+                                    <item>
+                                        <host>Template Hw RedFish HPe HTTPS LLD</host>
+                                        <key>FAN_min_rr[{#FANID}]</key>
+                                    </item>
+                                </graph_item>
+                            </graph_items>
+                        </graph_prototype>
+                    </graph_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Chassis/{$MEMBERID}/Thermal#/Fans/</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#FANID}</lld_macro>
+                            <path>$.FanName</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Fans</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect Interfaces</name>
+                    <type>HTTP_AGENT</type>
+                    <key>ethernetInt</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Master {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>eth_int_details[{#ETHURI}]</key>
+                            <delay>10m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}{#ETHURI}</url>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Interface AutoNeg {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>iface_autoneg[{#ETHURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.AutoNeg</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>eth_int_details[{#ETHURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} interface {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} AutoNeg has changed to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This ETH from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Interface Description {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>iface_desc[{#ETHURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Description</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>eth_int_details[{#ETHURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Interface Full Duplex {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>iface_fduplex[{#ETHURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.FullDuplex</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>eth_int_details[{#ETHURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} interface {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} Full Duplex has changed to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This ETH from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Interface MACAddress {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>iface_mcaddr[{#ETHURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.MACAddress</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>eth_int_details[{#ETHURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Interface SpeedMbps {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>iface_speed[{#ETHURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.SpeedMbps</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>eth_int_details[{#ETHURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} interface {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} Speed has changed to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This ETH from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Interface State {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>iface_state[{#ETHURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.State</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>eth_int_details[{#ETHURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} interface {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} has changed state to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This ETH from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Interface Status {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>iface_status[{#ETHURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Ethernet Ifs Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.Health</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>eth_int_details[{#ETHURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{iregexp(OK)}=0</expression>
+                                    <name>{HOSTNAME} interface {{#ETHURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} is not healthy</name>
+                                    <priority>HIGH</priority>
+                                    <description>This ETH from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                    </item_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Systems/{$MEMBERID}/EthernetInterfaces</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#ETHURI}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Members</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect Power Supplies Base</name>
+                    <type>HTTP_AGENT</type>
+                    <key>poweredBy</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Master {{#PSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>power_details[{#PSURI}]</key>
+                            <delay>60m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.PowerControl[0]</params>
+                                </step>
+                            </preprocessing>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}{#PSURI}</url>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Power Consumption Average {{#PSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_AVG_power_consumed[{#PSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.PowerMetrics.AverageConsumedWatts</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>power_details[{#PSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>PowerCapacityWatts {{#PSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_detail_power_capacity[{#PSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.PowerCapacityWatts</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>power_details[{#PSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Power Consumption {{#PSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_detail_power_consumed[{#PSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.PowerConsumedWatts</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>power_details[{#PSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Systems/{$MEMBERID}</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PSURI}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Links.PoweredBy</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect Power Supplies PSU</name>
+                    <type>HTTP_AGENT</type>
+                    <key>poweredByPSUITEM</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Firmware {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>firmware[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.FirmwareVersion</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Model {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>Model[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Model</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Master PSU Item {#PSUID}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>PSUITEM[{#PSUID}]</key>
+                            <delay>1h</delay>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.PowerSupplies[{#PSUID}]</params>
+                                </step>
+                            </preprocessing>
+                            <timeout>1m</timeout>
+                            <url>https://{$IPMI}{#PSUITEM}</url>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Health Status {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_Health_status[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.Health</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Line Input Voltage  {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_inputv[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.LineInputVoltage</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>PartNumber {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_PN[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.PartNumber</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SerialNumber {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_SN[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.SerialNumber</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SparePartNumber {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>PSU_SPN[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.SparePartNumber</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>State {#PSUID}</name>
+                            <type>DEPENDENT</type>
+                            <key>State[{#PSUID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Power Source Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.State</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>PSUITEM[{#PSUID}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Chassis/{$MEMBERID}/Power#/PowerSupplies</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PSUID}</lld_macro>
+                            <path>$.MemberId</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#PSUITEM}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.PowerSupplies</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect Processors</name>
+                    <type>HTTP_AGENT</type>
+                    <key>Processors</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Processor Total Cores {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_cores[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.TotalCores</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor Proc Family {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_family[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.ProcessorId.EffectiveFamily</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor Id Registers {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_idreg[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.ProcessorId.IdentificationRegisters</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor MaxSpeedMHz {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_mhz[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.MaxSpeedMHz</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor Model {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_model[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Model</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor Proc Model {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_proc_model[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.ProcessorId.EffectiveModel</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor Proc Step {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_proc_step[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.ProcessorId.Step</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor  State {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_state[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.State</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} state changed to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This CPU from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor  Status {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_status[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.Health</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{iregexp(OK)}=0</expression>
+                                    <name>{HOSTNAME} {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} is not Healthy ({ITEM.LASTVALUE}}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>HIGH</priority>
+                                    <description>This CPU from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Processor Total Threads {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>pcs_threads[{#PCSURI}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.TotalThreads</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>proc_master[{#PCSURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Master {{#PCSURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>proc_master[{#PCSURI}]</key>
+                            <delay>30m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Processors Information</name>
+                                </application>
+                            </applications>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}{#PCSURI}</url>
+                        </item_prototype>
+                    </item_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Systems/{$MEMBERID}/Processors</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#PCSURI}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Members</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect Storage RAID 1-1 Disks</name>
+                    <type>HTTP_AGENT</type>
+                    <key>RAID</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Disk Encryption Capable {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_enc_ability[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.EncryptionAbility</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk Encryption Status {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_enc_status[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.EncryptionStatus</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Failure Prediction {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_fail_predict[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.FailurePredicted</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{iregexp(false)}=0</expression>
+                                    <name>{HOSTNAME} {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} failure prediction is now {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This Disk from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Health Status {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_health[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.Health</params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>if (value === null || value === '') {
+  return &quot;OK&quot;
+} else {
+  return value
+}</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{iregexp(OK)}=0</expression>
+                                    <name>{HOSTNAME} {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} is not Healthy ({ITEM.LASTVALUE})</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>HIGH</priority>
+                                    <description>This Disk from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Hotspare Type {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_hotspare[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.HotspareType</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Manufacturer  {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_manufact[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Manufacturer</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Model {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_model[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Model</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Size Bytes {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_sizeBytes[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.CapacityBytes</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Block Size {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_size[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.BlockSizeBytes</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Serial Number {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_SN[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.SerialNumber</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>CapableSpeedGbs {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_speed[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.CapableSpeedGbs</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Disk State {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>blk_state[{#DSKURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.State</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>disk_master[{#DSKURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} has changed state to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This Disk from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Master {{#DSKURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>disk_master[{#DSKURI}]</key>
+                            <delay>30m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Disks Information</name>
+                                </application>
+                            </applications>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}{#DSKURI}</url>
+                        </item_prototype>
+                    </item_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Systems/{$MEMBERID}/Storage/RAID.Integrated.1-1</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#DSKURI}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Drives</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect Thermal</name>
+                    <type>HTTP_AGENT</type>
+                    <key>thermal</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Temp Current Reading {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_current[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>C</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].ReadingCelsius</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Sensor Health Status  {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_health_[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].Status.Health</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Lower Threshold Critical {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_ltc[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>C</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].LowerThresholdCritical</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Lower Threshold Fatal {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_ltf[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>C</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].LowerThresholdFatal</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Lower Threshold Non Critical Ref {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_ltnc_[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>C</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].LowerThresholdNonCritical</params>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>0</error_handler_params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>if (value === null || value === '') {
+  return &quot;0&quot;
+} else {
+  return value
+}</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Sensor Name {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_name[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].Name</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Sensor Health State {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_state[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].Status.State</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} {#TMPID} has changed state to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This state of sensor from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Upper Threshold Critical {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_utc[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>C</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].UpperThresholdCritical</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Upper Threshold Fatal {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_utf[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>C</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].UpperThresholdFatal</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Temp Upper Threshold Non Critical {#TMPID}</name>
+                            <type>DEPENDENT</type>
+                            <key>sensor_utnc[{#TMPID}]</key>
+                            <delay>0</delay>
+                            <value_type>FLOAT</value_type>
+                            <units>C</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[0].UpperThresholdNonCritical</params>
+                                    <error_handler>CUSTOM_VALUE</error_handler>
+                                    <error_handler_params>100</error_handler_params>
+                                </step>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    <params>if (value === null || value === '') {
+  return &quot;100&quot;
+} else {
+  return value
+}</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>temperature[{#TMPID}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Master MemberID {#TMPID}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>temperature[{#TMPID}]</key>
+                            <delay>30m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Temperature Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Temperatures[?(@.MemberId == &quot;{#TMPID}&quot;)]</params>
+                                </step>
+                            </preprocessing>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}{#TMPURI}</url>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template Hw RedFish HPe HTTPS LLD:sensor_current[{#TMPID}].last()}&gt;{Template Hw RedFish HPe HTTPS LLD:sensor_utc[{#TMPID}].last()} or {Template Hw RedFish HPe HTTPS LLD:sensor_current[{#TMPID}].last()}&gt;{Template Hw RedFish HPe HTTPS LLD:sensor_utf[{#TMPID}].last()} or&#13;
+{Template Hw RedFish HPe HTTPS LLD:sensor_current[{#TMPID}].last()}&gt;{Template Hw RedFish HPe HTTPS LLD:sensor_utnc[{#TMPID}].last()}</expression>
+                            <name>{HOSTNAME} {#TMPID} is above limits with {ITEM.LASTVALUE}</name>
+                            <opdata>{ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <description>This Temperature from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Chassis/{$MEMBERID}/Thermal</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#TMPID}</lld_macro>
+                            <path>$.MemberId</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#TMPURI}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Temperatures</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Collect Storage Volumes</name>
+                    <type>HTTP_AGENT</type>
+                    <key>Volumes</key>
+                    <delay>30m</delay>
+                    <authtype>BASIC</authtype>
+                    <username>{$USER}</username>
+                    <password>{$PASSWORD}</password>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Master {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>HTTP_AGENT</type>
+                            <key>volulme[{#VOLURI}]</key>
+                            <delay>15m</delay>
+                            <history>3h</history>
+                            <trends>0</trends>
+                            <value_type>LOG</value_type>
+                            <authtype>BASIC</authtype>
+                            <username>{$USER}</username>
+                            <password>{$PASSWORD}</password>
+                            <applications>
+                                <application>
+                                    <name>RedFish Volumes Information</name>
+                                </application>
+                            </applications>
+                            <timeout>60s</timeout>
+                            <url>https://{$IPMI}{#VOLURI}</url>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Encryption {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>vol_enc[{#VOLURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Volumes Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Encrypted</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>volulme[{#VOLURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume Health {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>vol_health[{#VOLURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Volumes Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.Health</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>volulme[{#VOLURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{iregexp(OK)}=0</expression>
+                                    <name>{HOSTNAME} {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} is not Healthy ({ITEM.LASTVALUE})</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>HIGH</priority>
+                                    <description>This Volume from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Name {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>vol_name[{#VOLURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Volumes Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Name</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>volulme[{#VOLURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume Size {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>vol_size[{#VOLURI}]</key>
+                            <delay>0</delay>
+                            <units>B</units>
+                            <applications>
+                                <application>
+                                    <name>RedFish Volumes Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.CapacityBytes</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>volulme[{#VOLURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume State {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>vol_state[{#VOLURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Volumes Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Status.State</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>volulme[{#VOLURI}]</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>{HOSTNAME} {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)} has changed state to {ITEM.LASTVALUE}</name>
+                                    <opdata>{ITEM.LASTVALUE}</opdata>
+                                    <priority>WARNING</priority>
+                                    <description>This Volume from {HOSTNAME} was detected via RedFish with {ITEM.LASTVALUE} -- If this trigger is unsolvable, you can resolve it manually</description>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Volume Type {{#VOLURI}.regsub(&quot;.*\/(.*)$&quot;,\1)}</name>
+                            <type>DEPENDENT</type>
+                            <key>vol_type[{#VOLURI}]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>RedFish Volumes Information</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.VolumeType</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>volulme[{#VOLURI}]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <timeout>60s</timeout>
+                    <url>https://{$IPMI}/redfish/v1/Systems/{$MEMBERID}/Storage/RAID.Integrated.1-1/Volumes</url>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#VOLURI}</lld_macro>
+                            <path>$.[&quot;@odata.id&quot;]</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.Members</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$MEMBERID}</macro>
+                    <value>1</value>
+                </macro>
+                <macro>
+                    <macro>{$USER}</macro>
+                    <value>zabbix-mon</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
